@@ -1,1 +1,69 @@
-<p>Task List Page</p>
+<h1>Tasks</h1>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 tasks-table">
+  <!-- id -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> Task ID </th>
+    <td mat-cell *matCellDef="let taskItem" (click)='handleTaskItemClick(taskItem)'>
+      {{taskItem.id}}
+    </td>
+  </ng-container>
+
+  <!-- title -->
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef> Title </th>
+    <td mat-cell *matCellDef="let taskItem" (click)='handleTaskItemClick(taskItem)'> 
+      {{taskItem.title}} 
+    </td>
+  </ng-container>
+
+  <!-- description -->
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let taskItem" (click)='handleTaskItemClick(taskItem)'>
+      {{taskItem.description}}
+    </td>
+  </ng-container>
+
+  <!-- status -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let taskItem" (click)='handleTaskItemClick(taskItem)'>
+      {{taskItem.status}}
+    </td>
+  </ng-container>
+  
+  <!-- actions -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let taskItem">
+      <!-- edit -->
+      <button
+        mat-icon-button 
+        aria-label="Edit icon button"
+        (click)="handleTaskEditBtnClick(taskItem)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <!-- delete -->
+      <button
+        mat-icon-button 
+        aria-label="Delete icon button"
+        (click)="handleTaskDeleteBtnClick(taskItem)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns" matHeaderRowDefSticky="true"></tr>
+  <tr 
+    mat-row 
+    *matRowDef="let taskItem; 
+    columns: displayedColumns;">
+  </tr>
+</table>
+
+<mat-paginator 
+  [pageSizeOptions]='[5, 10, 20]' 
+  showFirstLastButtons 
+  aria-label='Select page of periodic elements'>
+</mat-paginator>

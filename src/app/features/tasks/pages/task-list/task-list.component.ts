@@ -25,7 +25,7 @@ type TableColumnName = keyof TaskItem | 'actions';
   templateUrl: 'task-list.component.html',
   styleUrl: './task-list.component.scss',
 })
-export class TaskListComponent implements AfterViewInit, OnDestroy {
+export class TaskListComponent implements OnDestroy {
   destroy$ = new Subject<void>();
 
   displayedColumns: Array<TableColumnName> = ['id', 'title', 'description', 'status', 'actions'];
@@ -42,10 +42,6 @@ export class TaskListComponent implements AfterViewInit, OnDestroy {
     this.retrieveTasks();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
-
   taskList: Array<TaskItem> = [];
 
   private retrieveTasks() {
@@ -54,6 +50,7 @@ export class TaskListComponent implements AfterViewInit, OnDestroy {
       .subscribe(taskItems => {
         this.taskList = taskItems;
         this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
+        if (this.paginator) this.dataSource.paginator = this.paginator;
       });
   }
 

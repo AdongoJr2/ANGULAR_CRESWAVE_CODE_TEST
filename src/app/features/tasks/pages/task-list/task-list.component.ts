@@ -1,59 +1,50 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-
-export enum TaskItemStatus {
-  'complete' = 'complete', 
-  'incomplete' = 'incomplete',
-}
-
-export interface TaskItem {
-  id: number;
-  title: string;
-  description: string;
-  status: TaskItemStatus;
-}
+import { TasksService } from '../../services/tasks.service';
+import { TaskItem } from '../../models/task-item';
+import { TaskItemStatus } from '../../models/task-item-status';
 
 const taskList: Array<TaskItem> = [
   {
     id: 1,
     title: 'Task 1',
     description: 'Task 1\'s description goes here',
-    status: TaskItemStatus.incomplete,
+    status: TaskItemStatus.INCOMPLETE,
   },
   {
     id: 2,
     title: 'Task 2',
     description: 'Task 2\'s description goes here',
-    status: TaskItemStatus.incomplete,
+    status: TaskItemStatus.INCOMPLETE,
   },
   {
     id: 3,
     title: 'Task 3',
     description: 'Task 3\'s description goes here',
-    status: TaskItemStatus.complete,
+    status: TaskItemStatus.COMPLETE,
   },
   {
     id: 4,
     title: 'Task 4',
     description: 'Task 4\'s description goes here',
-    status: TaskItemStatus.complete,
+    status: TaskItemStatus.COMPLETE,
   },
   {
     id: 5,
     title: 'Task 5',
     description: 'Task 5\'s description goes here',
-    status: TaskItemStatus.incomplete,
+    status: TaskItemStatus.INCOMPLETE,
   },
   {
     id: 6,
     title: 'Task 6',
     description: 'Task 6\'s description goes here',
-    status: TaskItemStatus.incomplete,
+    status: TaskItemStatus.INCOMPLETE,
   },
 ];
 
@@ -77,6 +68,8 @@ export class TaskListComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<TaskItem>(taskList);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  private tasksService = inject(TasksService);
 
   constructor(
     private readonly router: Router,
@@ -103,3 +96,5 @@ export class TaskListComponent implements AfterViewInit {
     console.log(`Task Item [Delete] Click ==== `, taskItem);
   }
 }
+export { TaskItem, TaskItemStatus };
+

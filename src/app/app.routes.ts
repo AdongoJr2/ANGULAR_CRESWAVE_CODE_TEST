@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { PageNotFoundComponent } from './features/page-not-found';
+import { PageNotFoundComponent } from '@features/page-not-found';
 
 export const routes: Routes = [
   {
@@ -9,7 +9,7 @@ export const routes: Routes = [
   },
   {
     path: 'tasks',
-    loadChildren: () => import('./features/tasks/tasks.routes').then(r => r.routes),
+    loadChildren: () => import('@features/tasks/tasks.routes').then(r => r.routes),
   },
   {
     path: '**',

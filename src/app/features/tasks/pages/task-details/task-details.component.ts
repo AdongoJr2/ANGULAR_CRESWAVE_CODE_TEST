@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskItem, TaskItemStatus } from '../task-list/task-list.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { TasksService } from '../../services/tasks.service';
 
 @Component({
   selector: 'app-task-details',
@@ -22,6 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './task-details.component.scss',
 })
 export class TaskDetailsComponent {
+  private tasksService = inject(TasksService);
+
   readonly TaskItemStatus = TaskItemStatus;
   taskItemStatusValues = Object.values(TaskItemStatus)
 
@@ -30,7 +33,7 @@ export class TaskDetailsComponent {
     id: +this.taskId,
     title: 'Sample title',
     description: 'Sample description',
-    status: TaskItemStatus.complete
+    status: TaskItemStatus.COMPLETE
   };
 
   @Input()

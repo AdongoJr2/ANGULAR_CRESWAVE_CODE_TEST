@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskItem, TaskItemStatus } from '../task-list/task-list.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { TasksService } from '../../services/tasks.service';
+import { Subject, takeUntil } from 'rxjs';
+import { TaskUpdateDto } from '@features/tasks/dtos/task0update.dto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-task-details',
@@ -22,25 +25,20 @@ import { TasksService } from '../../services/tasks.service';
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss',
 })
-export class TaskDetailsComponent {
+export class TaskDetailsComponent implements OnDestroy {
+  destroy$ = new Subject<void>();
+
   private tasksService = inject(TasksService);
 
   readonly TaskItemStatus = TaskItemStatus;
   taskItemStatusValues = Object.values(TaskItemStatus)
 
-  // TODO: retrieve from API (service)
-  taskItem: TaskItem = {
-    id: +this.taskId,
-    title: 'Sample title',
-    description: 'Sample description',
-    status: TaskItemStatus.COMPLETE
-  };
+  taskItemId: number | null = null;
 
   @Input()
   set taskId(taskId: string) {
-    console.log(taskId);
-
-    this.updateFormFields(this.taskItem);
+    this.taskItemId = +taskId;
+    this.retrieveTaskItem(this.taskItemId);
   }
 
   taskForm = this.formBuilder.group({
@@ -50,6 +48,7 @@ export class TaskDetailsComponent {
   });
 
   constructor(
+    private readonly router: Router,
     private readonly formBuilder: FormBuilder,
   ) { }
 
@@ -65,20 +64,56 @@ export class TaskDetailsComponent {
     return this.taskForm.controls.status;
   }
 
-  private updateFormFields(taskItem: TaskItem) {
+  taskItem?: TaskItem;
+
+  private retrieveTaskItem(taskItemId: number) {
+    this.tasksService.getTaskById(taskItemId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(taskItem => {
+        this.taskItem = taskItem;
+        this.updateFormFields(this.taskItem);
+      });
+  }
+
+  private updateFormFields(taskItem?: TaskItem) {
     this.taskForm.patchValue({
-      title: taskItem.title,
-      description: taskItem.description,
-      status: taskItem.status,
+      title: taskItem?.title,
+      description: taskItem?.description,
+      status: taskItem?.status,
     });
   }
 
   onSubmit() {
     if (this.taskForm.invalid) return;
 
-    const formValue = this.taskForm.value;
+    const { title, description, status } = this.taskForm.value;
 
-    console.log(formValue);
+    const taskUpdateDto: TaskUpdateDto = {
+      title: title ?? this.taskItem?.status,
+      description: description ?? this.taskItem?.description,
+      status: status ?? this.taskItem?.status,
+    };
+
+    this.updateTask(taskUpdateDto);
   }
 
+  private updateTask(taskUpdateDto: TaskUpdateDto) {
+    if (!this.taskItemId) return;
+
+    this.tasksService.updateTask(this.taskItemId, taskUpdateDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((updatedTask) => {
+        this.updateFormFields(updatedTask);
+        this.navigateToTaskListPage();
+      });
+  }
+
+  navigateToTaskListPage() {
+    this.router.navigate(['/tasks']);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

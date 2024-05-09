@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksService } from '../../services/tasks.service';
 import { TaskItem } from '../../models/task-item';
-import { TaskItemStatus } from '../../models/task-item-status';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, takeUntil } from 'rxjs';
 
 type TableColumnName = keyof TaskItem | 'actions';
 
@@ -25,7 +25,9 @@ type TableColumnName = keyof TaskItem | 'actions';
   templateUrl: 'task-list.component.html',
   styleUrl: './task-list.component.scss',
 })
-export class TaskListComponent implements AfterViewInit {
+export class TaskListComponent implements AfterViewInit, OnDestroy {
+  destroy$ = new Subject<void>();
+
   displayedColumns: Array<TableColumnName> = ['id', 'title', 'description', 'status', 'actions'];
   dataSource = new MatTableDataSource<TaskItem>([]);
 
@@ -48,32 +50,44 @@ export class TaskListComponent implements AfterViewInit {
 
   private retrieveTasks() {
     this.tasksService.getTasks()
-    .pipe(takeUntilDestroyed())
-    .subscribe(taskItems => {
-      this.taskList = taskItems;
-      this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe(taskItems => {
+        this.taskList = taskItems;
+        this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
+      });
   }
 
   handleTaskItemClick(taskItem: TaskItem) {
     this.navigateToDetailsPage(taskItem.id);
   }
-  
+
   handleTaskEditBtnClick(taskItem: TaskItem) {
     this.navigateToDetailsPage(taskItem.id);
   }
-  
+
   private navigateToDetailsPage(taskItemId: number) {
     this.router.navigate([`${taskItemId}/details`], { relativeTo: this.route });
   }
-  
+
   navigateToNewTaskPage() {
     this.router.navigate(['new'], { relativeTo: this.route });
   }
 
   handleTaskDeleteBtnClick(taskItem: TaskItem) {
-    console.log(`Task Item [Delete] Click ==== `, taskItem);
+    this.deleteTask(taskItem.id);
+  }
+
+  private deleteTask(taskItemId: number) {
+    this.tasksService.deleteTask(taskItemId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.taskList = this.taskList.filter(item => item.id !== taskItemId);
+        this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
-export { TaskItem, TaskItemStatus };
-

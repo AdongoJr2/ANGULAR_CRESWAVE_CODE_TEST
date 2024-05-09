@@ -7,9 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { TaskItemStatus } from '../task-list/task-list.component';
 import { TasksService } from '@features/tasks/services/tasks.service';
 import { TaskCreationDto } from '@features/tasks/dtos/task-creation.dto';
+import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 
 @Component({
   selector: 'app-task-addition',

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TaskItem, TaskItemStatus } from '../task-list/task-list.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +9,8 @@ import { TasksService } from '../../services/tasks.service';
 import { Subject, takeUntil } from 'rxjs';
 import { TaskUpdateDto } from '@features/tasks/dtos/task0update.dto';
 import { Router } from '@angular/router';
+import { TaskItemStatus } from '@features/tasks/models/task-item-status';
+import { TaskItem } from '@features/tasks/models/task-item';
 
 @Component({
   selector: 'app-task-details',

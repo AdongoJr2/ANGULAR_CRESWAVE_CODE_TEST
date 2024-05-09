@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -65,6 +65,10 @@ export class TaskListComponent implements AfterViewInit {
   
   private navigateToDetailsPage(taskItemId: number) {
     this.router.navigate([`${taskItemId}/details`], { relativeTo: this.route });
+  }
+  
+  navigateToNewTaskPage() {
+    this.router.navigate(['new'], { relativeTo: this.route });
   }
 
   handleTaskDeleteBtnClick(taskItem: TaskItem) {

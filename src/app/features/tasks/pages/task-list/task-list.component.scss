@@ -11,3 +11,9 @@
 .mat-mdc-row:hover .mat-mdc-cell {
   border-color: currentColor;
 }
+
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { TasksComponent } from './tasks.component';
-import { TaskListComponent, TaskDetailsComponent } from './pages';
+import { TaskListComponent, TaskDetailsComponent, TaskAdditionComponent } from './pages';
 
 export const routes: Routes = [
   {
@@ -12,6 +12,11 @@ export const routes: Routes = [
         path: '',
         component: TaskListComponent,
         title: 'Task Manager | Tasks',
+      },
+      {
+        path: 'new',
+        component: TaskAdditionComponent,
+        title: 'Task Manager | Add Task',
       },
       {
         path: ':taskId/details',

@@ -26,7 +26,7 @@ export class TasksService {
     }
 
     getTasks(): Observable<TaskItem[]> {
-      return this.http.get<ApiResponseListBody<TaskItem>>(`${this.tasksApiUrl}?pageSize=100`)
+      return this.http.get<ApiResponseListBody<TaskItem>>(`${this.tasksApiUrl}`)
         .pipe(
           map((responseBody) => responseBody.data.list),
         );

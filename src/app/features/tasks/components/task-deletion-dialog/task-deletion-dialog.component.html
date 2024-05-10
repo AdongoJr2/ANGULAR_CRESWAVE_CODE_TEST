@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Delete Task #{{data.id}}</h2>
+
+<mat-dialog-content>
+  Are you sure you want to delete task '{{data.title}}'?
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button [disabled]="isDeletingTask" (click)="handleTaskDeleteBtnClick(data)">
+    @if (isDeletingTask) {
+      <mat-spinner color="accent" [diameter]="20" />
+    } @else {
+      Delete
+    }
+  </button>
+</mat-dialog-actions>

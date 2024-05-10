@@ -10,6 +10,14 @@ import { TaskItem } from '../../models/task-item';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import {
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { TaskDeletionDialogComponent } from '@features/tasks/components/task-deletion-dialog/task-deletion-dialog.component';
 
 type TableColumnName = keyof TaskItem | 'actions';
 
@@ -23,6 +31,10 @@ type TableColumnName = keyof TaskItem | 'actions';
     MatButtonModule,
     MatIconModule,
     NgxSkeletonLoaderModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
   templateUrl: 'task-list.component.html',
   styleUrl: './task-list.component.scss',
@@ -40,6 +52,7 @@ export class TaskListComponent implements OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    public dialog: MatDialog,
   ) {
     this.retrieveTasks();
   }
@@ -78,17 +91,27 @@ export class TaskListComponent implements OnDestroy {
     this.router.navigate(['new'], { relativeTo: this.route });
   }
 
-  handleTaskDeleteBtnClick(taskItem: TaskItem) {
-    this.deleteTask(taskItem.id);
+  openTaskDeletionConfirmationDialog(taskItem: TaskItem) {
+    const dialogRef = this.dialog.open(TaskDeletionDialogComponent, {
+      data: taskItem,
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: result => {
+          console.log(result);
+          this.handleTaskDeletionSuccess(<number>result?.data?.taskItemId);
+        },
+      })
   }
 
-  private deleteTask(taskItemId: number) {
-    this.tasksService.deleteTask(taskItemId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.taskList = this.taskList.filter(item => item.id !== taskItemId);
-        this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
-      });
+  handleTaskDeletionSuccess(taskItemId?: number) {
+    if (!taskItemId) return;
+
+    this.taskList = this.taskList.filter(item => item.id !== taskItemId);
+    this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
   }
 
   ngOnDestroy() {

@@ -134,6 +134,8 @@ export class TaskListComponent implements OnDestroy {
 
     this.taskList = this.taskList.filter(item => item.id !== taskItemId);
     this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
+
+    if (this.paginator) this.dataSource.paginator = this.paginator;
   }
 
   ngOnDestroy() {

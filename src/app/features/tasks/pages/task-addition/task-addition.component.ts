@@ -5,8 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { TasksService } from '@features/tasks/services/tasks.service';
 import { TaskCreationDto } from '@features/tasks/dtos/task-creation.dto';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
@@ -21,6 +22,7 @@ import { TaskItemStatus } from '@features/tasks/models/task-item-status';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: 'task-addition.component.html',
   styleUrl: './task-addition.component.scss',
@@ -70,9 +72,13 @@ export class TaskAdditionComponent implements OnDestroy {
     this.addTask(taskCreationDto);
   }
 
+  isAddingTask = false;
+  
   private addTask(taskCreationDto: TaskCreationDto) {
+    this.isAddingTask = true;
+
     this.tasksService.addTask(taskCreationDto)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), finalize(() => this.isAddingTask = false))
       .subscribe(() => {
         this.navigateToTaskListPage();
       });

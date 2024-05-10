@@ -8,7 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TasksService } from '../../services/tasks.service';
 import { TaskItem } from '../../models/task-item';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 type TableColumnName = keyof TaskItem | 'actions';
 
@@ -21,6 +22,7 @@ type TableColumnName = keyof TaskItem | 'actions';
     MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
+    NgxSkeletonLoaderModule,
   ],
   templateUrl: 'task-list.component.html',
   styleUrl: './task-list.component.scss',
@@ -44,13 +46,19 @@ export class TaskListComponent implements OnDestroy {
 
   taskList: Array<TaskItem> = [];
 
+  isRetrievingTaskList = false;
+
   private retrieveTasks() {
+    this.isRetrievingTaskList = true;
+
     this.tasksService.getTasks()
-      .pipe(takeUntilDestroyed())
-      .subscribe(taskItems => {
-        this.taskList = taskItems;
-        this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
-        if (this.paginator) this.dataSource.paginator = this.paginator;
+      .pipe(takeUntilDestroyed(), finalize(() => this.isRetrievingTaskList = false))
+      .subscribe({
+        next: (taskItems) => {
+          this.taskList = taskItems;
+          this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
+          if (this.paginator) this.dataSource.paginator = this.paginator;
+        },
       });
   }
 

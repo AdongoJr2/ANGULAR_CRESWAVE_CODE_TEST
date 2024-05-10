@@ -5,12 +5,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TasksService } from '../../services/tasks.service';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { TaskUpdateDto } from '@features/tasks/dtos/task0update.dto';
 import { Router } from '@angular/router';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 import { TaskItem } from '@features/tasks/models/task-item';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-task-details',
@@ -22,6 +24,8 @@ import { TaskItem } from '@features/tasks/models/task-item';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
+    NgxSkeletonLoaderModule,
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss',
@@ -66,13 +70,18 @@ export class TaskDetailsComponent implements OnDestroy {
   }
 
   taskItem?: TaskItem;
+  isRetrievingTaskItem = false;
 
   private retrieveTaskItem(taskItemId: number) {
+    this.isRetrievingTaskItem = true;
+    
     this.tasksService.getTaskById(taskItemId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(taskItem => {
-        this.taskItem = taskItem;
-        this.updateFormFields(this.taskItem);
+      .pipe(takeUntil(this.destroy$), finalize(() => this.isRetrievingTaskItem = false))
+      .subscribe({
+        next: taskItem => {
+          this.taskItem = taskItem;
+          this.updateFormFields(this.taskItem);
+        },
       });
   }
 
@@ -98,11 +107,15 @@ export class TaskDetailsComponent implements OnDestroy {
     this.updateTask(taskUpdateDto);
   }
 
+  isUpdatingtask = false;
+
   private updateTask(taskUpdateDto: TaskUpdateDto) {
     if (!this.taskItemId) return;
 
+    this.isUpdatingtask = true;
+
     this.tasksService.updateTask(this.taskItemId, taskUpdateDto)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), finalize(() => this.isUpdatingtask = false))
       .subscribe((updatedTask) => {
         this.updateFormFields(updatedTask);
         this.navigateToTaskListPage();

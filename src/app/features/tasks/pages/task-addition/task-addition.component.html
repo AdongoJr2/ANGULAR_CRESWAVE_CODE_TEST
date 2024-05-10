@@ -43,6 +43,10 @@
   
   <br />
   
-  <button mat-raised-button color="primary" type="submit">
-    Add Task
+  <button mat-raised-button color="primary" type="submit" [disabled]="isAddingTask">
+    @if (isAddingTask) {
+      <mat-spinner color="accent" [diameter]="20" />
+    } @else {
+      Add Task
+    }
   </button>

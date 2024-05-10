@@ -1,0 +1,73 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Create A New Task
+    </mat-card-title>
+  </mat-card-header>
+  
+  <mat-card-content>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input formControlName="title" matInput placeholder="Enter the task's title..." />
+        @if (title.hasError('required')) {
+          <mat-error>Title is required</mat-error>
+        } @else if (title.hasError('minlength')) {
+          <mat-error>Title should be a minimum of {{ title.errors?.['minlength']?.requiredLength }} characters long</mat-error>
+        } @else {
+          <mat-error>Invalid input</mat-error>
+        }
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea 
+          formControlName="description" 
+          matInput
+          rows="5"
+          placeholder="Enter the task's description...">
+        </textarea>
+        @if (description.hasError('required')) {
+          <mat-error>Description is required</mat-error>
+        } @else if (description.hasError('minlength')) {
+          <mat-error>Description should be a minimum of {{ description.errors?.['minlength']?.requiredLength }} characters long</mat-error>
+        } @else {
+          <mat-error>Invalid input</mat-error>
+        }
+      </mat-form-field>
+        
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          @for (item of taskItemStatusValues; track item) {
+            <mat-option [value]="item">{{ item | titlecase }}</mat-option>
+          }
+        </mat-select>
+        @if (status.hasError('required')) {
+          <mat-error>Status is required</mat-error>
+        } @else {
+          <mat-error>Invalid input</mat-error>
+        }
+      </mat-form-field>
+      
+      <div class="action-btns">
+        <button 
+          type="button"
+          mat-icon-button 
+          routerLink="/tasks"
+          matTooltip="Go Back"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="isAddingTask">
+          @if (isAddingTask) {
+            <mat-spinner color="accent" [diameter]="20" />
+          } @else {
+            Add Task
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

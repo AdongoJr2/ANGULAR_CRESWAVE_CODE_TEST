@@ -1,9 +1,18 @@
-# TaskManagementFrontend
+# Task Management Frontend (Application)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.6.
+This is a simple Task Management Frontend application
 
-## Development server
+## Tech Stack
 
+- [Angular](https://angular.dev/): Generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.6
+- [Angular Material](https://material.angular.io)
+
+## Project Setup
+
+- Clone this repository to your machine
+- Run `npm install` from the project directory to install the project dependencies
+
+## Running the app
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding

@@ -82,7 +82,15 @@ export class TaskAdditionComponent implements OnDestroy {
     this.tasksService.addTask(taskCreationDto)
       .pipe(takeUntil(this.destroy$), finalize(() => this.isAddingTask = false))
       .subscribe({
-        next: () => this.navigateToTaskListPage(),
+        next: () => {
+          this.snackBar.open('Task added successfully', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
+
+          this.navigateToTaskListPage();
+        },
         error: () => {
           this.snackBar.open('Failed to add task', 'X', {
             horizontalPosition: 'center',

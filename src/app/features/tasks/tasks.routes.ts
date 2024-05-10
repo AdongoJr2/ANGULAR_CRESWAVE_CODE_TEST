@@ -19,7 +19,7 @@ export const routes: Routes = [
         title: 'Task Manager | Add Task',
       },
       {
-        path: ':taskId/details',
+        path: ':taskId',
         component: TaskDetailsComponent,
         title: 'Task Manager | Task Details',
       },

@@ -84,7 +84,7 @@ export class TaskListComponent implements OnDestroy {
   }
 
   private navigateToDetailsPage(taskItemId: number) {
-    this.router.navigate([`${taskItemId}/details`], { relativeTo: this.route });
+    this.router.navigate([taskItemId], { relativeTo: this.route });
   }
 
   navigateToNewTaskPage() {

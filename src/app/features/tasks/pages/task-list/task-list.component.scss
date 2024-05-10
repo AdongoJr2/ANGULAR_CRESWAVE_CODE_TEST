@@ -3,17 +3,28 @@
 }
 
 .mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
   cursor: pointer;
 }
 
 .mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
+  background-color: rgba(128, 128, 128, 0.25);
 }
 
 .task-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.actions-table-data {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.mat-column-title {
+  min-width: 120px;
+}
+
+.mat-column-description {
+  min-width: 300px;
 }

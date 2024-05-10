@@ -6,12 +6,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { TasksService } from '@features/tasks/services/tasks.service';
 import { TaskCreationDto } from '@features/tasks/dtos/task-creation.dto';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-task-addition',
@@ -24,6 +27,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatCardModule,
+    RouterLink,
+    MatIconModule,
+    MatTooltipModule,
   ],
   templateUrl: 'task-addition.component.html',
   styleUrl: './task-addition.component.scss',

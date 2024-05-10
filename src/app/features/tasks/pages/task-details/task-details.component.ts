@@ -12,8 +12,11 @@ import { TaskUpdateDto } from '@features/tasks/dtos/task0update.dto';
 import { Router, RouterLink } from '@angular/router';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 import { TaskItem } from '@features/tasks/models/task-item';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormLoaderSkeletonComponent } from '@features/tasks/components/form-loader-skeleton/form-loader-skeleton.component';
 
 @Component({
   selector: 'app-task-details',
@@ -26,8 +29,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    NgxSkeletonLoaderModule,
     RouterLink,
+    MatCardModule,
+    MatIconModule,
+    MatTooltipModule,
+    FormLoaderSkeletonComponent,
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss',
@@ -128,6 +134,11 @@ export class TaskDetailsComponent implements OnDestroy {
         next: (updatedTask) => {
           this.updateFormFields(updatedTask);
           this.navigateToTaskListPage();
+          this.snackBar.open('Task updated successfully', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
         },
         error: () => {
           this.snackBar.open('Failed to update task', 'X', {

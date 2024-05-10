@@ -10,6 +10,8 @@ import { TaskItem } from '../../models/task-item';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   MatDialog,
   MatDialogActions,
@@ -19,6 +21,8 @@ import {
 } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TaskDeletionDialogComponent } from '@features/tasks/components/task-deletion-dialog/task-deletion-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 
 type TableColumnName = keyof TaskItem | 'actions';
 
@@ -36,14 +40,18 @@ type TableColumnName = keyof TaskItem | 'actions';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    MatCardModule,
+    MatTooltipModule,
+    MatChipsModule,
   ],
   templateUrl: 'task-list.component.html',
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnDestroy {
   destroy$ = new Subject<void>();
+  readonly TaskItemStatus = TaskItemStatus
 
-  displayedColumns: Array<TableColumnName> = ['id', 'title', 'description', 'status', 'actions'];
+  displayedColumns: Array<TableColumnName> = ['title', 'description', 'status', 'actions'];
   dataSource = new MatTableDataSource<TaskItem>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

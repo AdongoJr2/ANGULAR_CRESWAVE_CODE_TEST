@@ -13,7 +13,7 @@ This is a simple Task Management Frontend application
 - Run `npm install` from the project directory to install the project dependencies
 
 ## Running the app
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `npm run start:dev` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 

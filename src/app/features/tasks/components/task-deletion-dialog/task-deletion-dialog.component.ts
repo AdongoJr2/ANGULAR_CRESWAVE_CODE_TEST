@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, inject, OnDestroy } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, TitleStrategy } from '@angular/router';
 import { TaskItem } from '@features/tasks/models/task-item';
 import { TasksService } from '@features/tasks/services/tasks.service';
@@ -33,6 +34,7 @@ export class TaskDeletionDialogComponent implements OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: TaskItem,
     public dialogRef: MatDialogRef<TaskDeletionDialogComponent>,
   ) { }
@@ -52,6 +54,13 @@ export class TaskDeletionDialogComponent implements OnDestroy {
         next: () => {
           this.dialogRef.close({ data: { taskItemId } });
         },
+        error: () => {
+          this.snackBar.open('Failed to delete task', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
+        }
       });
   }
 

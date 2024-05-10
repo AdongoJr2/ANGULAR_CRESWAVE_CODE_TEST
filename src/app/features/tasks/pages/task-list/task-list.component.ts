@@ -17,6 +17,7 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TaskDeletionDialogComponent } from '@features/tasks/components/task-deletion-dialog/task-deletion-dialog.component';
 
 type TableColumnName = keyof TaskItem | 'actions';
@@ -53,6 +54,7 @@ export class TaskListComponent implements OnDestroy {
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     public dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {
     this.retrieveTasks();
   }
@@ -71,6 +73,13 @@ export class TaskListComponent implements OnDestroy {
           this.taskList = taskItems;
           this.dataSource = new MatTableDataSource<TaskItem>(this.taskList);
           if (this.paginator) this.dataSource.paginator = this.paginator;
+        },
+        error: () => {
+          this.snackBar.open('Failed to fetch tasks', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
         },
       });
   }
@@ -101,10 +110,15 @@ export class TaskListComponent implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: result => {
-          console.log(result);
           this.handleTaskDeletionSuccess(<number>result?.data?.taskItemId);
+
+          this.snackBar.open('Task deleted successfully', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
         },
-      })
+      });
   }
 
   handleTaskDeletionSuccess(taskItemId?: number) {

@@ -11,6 +11,7 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { TasksService } from '@features/tasks/services/tasks.service';
 import { TaskCreationDto } from '@features/tasks/dtos/task-creation.dto';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-task-addition',
@@ -44,6 +45,7 @@ export class TaskAdditionComponent implements OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly formBuilder: FormBuilder,
+    private readonly snackBar: MatSnackBar,
   ) { }
 
   get title() {
@@ -79,8 +81,15 @@ export class TaskAdditionComponent implements OnDestroy {
 
     this.tasksService.addTask(taskCreationDto)
       .pipe(takeUntil(this.destroy$), finalize(() => this.isAddingTask = false))
-      .subscribe(() => {
-        this.navigateToTaskListPage();
+      .subscribe({
+        next: () => this.navigateToTaskListPage(),
+        error: () => {
+          this.snackBar.open('Failed to add task', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
+        },
       });
   }
 

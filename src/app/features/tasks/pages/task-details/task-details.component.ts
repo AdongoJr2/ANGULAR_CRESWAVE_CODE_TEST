@@ -9,10 +9,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TasksService } from '../../services/tasks.service';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { TaskUpdateDto } from '@features/tasks/dtos/task0update.dto';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TaskItemStatus } from '@features/tasks/models/task-item-status';
 import { TaskItem } from '@features/tasks/models/task-item';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-task-details',
@@ -26,6 +27,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatSelectModule,
     MatProgressSpinnerModule,
     NgxSkeletonLoaderModule,
+    RouterLink,
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss',
@@ -55,6 +57,7 @@ export class TaskDetailsComponent implements OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly formBuilder: FormBuilder,
+    private readonly snackBar: MatSnackBar,
   ) { }
 
   get title() {
@@ -71,9 +74,11 @@ export class TaskDetailsComponent implements OnDestroy {
 
   taskItem?: TaskItem;
   isRetrievingTaskItem = false;
+  isRetrievingTaskItemError = false;
 
   private retrieveTaskItem(taskItemId: number) {
     this.isRetrievingTaskItem = true;
+    this.isRetrievingTaskItemError = false;
     
     this.tasksService.getTaskById(taskItemId)
       .pipe(takeUntil(this.destroy$), finalize(() => this.isRetrievingTaskItem = false))
@@ -81,6 +86,9 @@ export class TaskDetailsComponent implements OnDestroy {
         next: taskItem => {
           this.taskItem = taskItem;
           this.updateFormFields(this.taskItem);
+        },
+        error: () => {
+          this.isRetrievingTaskItemError = true;
         },
       });
   }
@@ -116,9 +124,18 @@ export class TaskDetailsComponent implements OnDestroy {
 
     this.tasksService.updateTask(this.taskItemId, taskUpdateDto)
       .pipe(takeUntil(this.destroy$), finalize(() => this.isUpdatingtask = false))
-      .subscribe((updatedTask) => {
-        this.updateFormFields(updatedTask);
-        this.navigateToTaskListPage();
+      .subscribe({
+        next: (updatedTask) => {
+          this.updateFormFields(updatedTask);
+          this.navigateToTaskListPage();
+        },
+        error: () => {
+          this.snackBar.open('Failed to update task', 'X', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            duration: 5000,
+          });
+        }
       });
   }
 
